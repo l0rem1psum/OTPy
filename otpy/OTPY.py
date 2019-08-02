@@ -110,9 +110,12 @@ class OTPY(object):
 
 if __name__ == "__main__":
 
-    key = "12345"
+    key = "12345DEADBEEF"
     otpy = OTPY(key)
     totp = otpy.get_totp()
     print(totp)
 
-    print(otpy.get_base32_key())
+    # Print QR code
+    import subprocess
+    uri = "otpauth://totp/Test?secret=" + otpy.get_base32_key().decode("utf-8")
+    subprocess.run(["qrencode", "-t", "utf8", uri])
