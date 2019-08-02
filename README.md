@@ -23,11 +23,27 @@ Alternatively,
 python3 -m pip install otpy
 ```
 
+To upgrade the package:
+
+```bash
+python3 -m pip install --no-cache-dir --upgrade otpy
+```
+
 Optionally, if you are Under unix, you can install the `qrencode` package:
 
 ```bash
 apt-get install qrencode
 ```
+
+To verify that you have successfully installed the package, you can try to run (You must have `qrencode` installed to run this):
+
+```bash
+python3 -m otpy
+```
+
+You will expect something like this:
+
+![Expected output](https://i.ibb.co/x7DYbHg/test.png)
 
 ## Usage
 
@@ -44,7 +60,7 @@ key = "0123456789ABCDEF" # Key string must be hexadecimal!
 otp = OTPY(key)
 ```
 
-To get the Base32 encoded key value, simply run:
+To get the Base32 encoded key value that is specified in [RFC 3548](https://tools.ietf.org/html/rfc3548), simply run:
 
 ```python
 otp.get_base32_key()
