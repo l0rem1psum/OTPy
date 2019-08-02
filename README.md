@@ -20,7 +20,7 @@ pip install otpy
 Alternatively,
 
 ```bash
-python3 -m pip install otp
+python3 -m pip install otpy
 ```
 
 Optionally, if you are Under unix, you can install the `qrencode` package:
