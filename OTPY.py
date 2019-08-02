@@ -4,22 +4,67 @@ import time
 import base64
 
 class OTPY(object):
+    """OTPY class for generating One-Time Password (OTP)"""
+
     def __init__(self, key: str):
+        """
+        Args:
+            key (str): A hexadecimal key string.
+
+        """
         self._key = key
 
     def _hex_str_2_bytes(self, hex: str) -> bytes:
+        """ Method to convert a hexadecimal string to `bytes` built-in type.
+
+        Args:
+            hex (str): Hexadecimal string.
+
+        Returns:
+            bytes: Converted hexadecimal string.
+
+        """
         hex = '010' + hex if len(hex) & 1 else '10' + hex
         return bytes.fromhex(hex)[1:]
 
     def _hmac_sha(self, keyBytes: bytes, text: bytes) -> bytes:
+        """ Method to obtain the digest of the Key-Hashed Message Authentication Code.
+
+        Currently only support HMAC-SHA1 based on the specifications in RFC 2104.
+
+        Args:
+            keyBytes (bytes): The secret key.
+            text (bytes): The message to be authenticated.
+
+        Returns:
+            bytes: A 20-byte long `bytes` type hash output. The output byte-length depends on the length of the hash function.
+        
+        """
         h_mac = hmac.new(keyBytes, text, hashlib.sha1)
         return h_mac.digest()
 
-    def get_base32_Key(self) -> str:
+    def get_base32_key(self) -> str:
+        """ Method to convert the secret key to a Base32 encoded key based on the specificatiosn in RFC 3548. 
+        
+        Returns:
+            str: The Base32 encoded secret key.
+        
+        """
         key_bytes = self._hex_str_2_bytes(self._key)
         return base64.b32encode(key_bytes)
 
     def get_totp(self, returnDigits: int = 6, T0: int = 0, X: int = 30) -> str:
+        """ Get the TOTP at the current time.
+
+        Args:
+            returnDigits (int): Number of digits of the TOTP. Default is 6.
+            T0 (int): The Unix time to start counting time steps (default value is 0, i.e., the Unix epoch).
+            X: the time step in seconds (default value X = 30 seconds).
+
+        Returns:
+            str: TOTP of length returnDigits.
+        
+        """
         codeDigits = int(returnDigits)
         result = str()
 
@@ -51,7 +96,16 @@ class OTPY(object):
 
         hotp = binary % (10**returnDigits)
 
-        return str(hotp)
+        return str(hotp).zfill(returnDigits)
+
+    def verify_otp(self, otp: str) -> bool:
+        """ Verify the OTP given
+
+        Returns:
+            bool: True if the OTP is correct, False if wrong
+        
+        """
+        return otp == self.get_totp()
 
 
 if __name__ == "__main__":
@@ -61,4 +115,4 @@ if __name__ == "__main__":
     totp = otpy.get_totp()
     print(totp)
 
-    print(otpy.get_base32_Key())
+    print(otpy.get_base32_key())
